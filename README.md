@@ -1,2 +1,26 @@
 # AetherVMExt
-AetherVM extension files.
+[AetherVM](https://github.com/AetherVM/AetherVM) extension files for iOS.
+
+## arm64.opc.br
+[Remill](https://github.com/lifting-bits/remill) has poor support for `AArch64` SIMD instruction set, so we use this pre-iterated opcodes, which it won't and can't lift, as a supplement when executing these instructions.
+
+This file is generated in the following steps:
+```
+# generate the raw opcodes
+AetherVM % icpp tool/handler_generator_arm64.cc tool/arm64.opc
+10:39:35 R - Iterating arm64 instruction set 0%...
+10:39:36 R - Iterating arm64 instruction set 1%...
+10:42:16 R - Iterating arm64 instruction set 2%...
+10:43:57 R - Iterating arm64 instruction set 3%...
+...
+12:03:16 R - Iterating arm64 instruction set 98%...
+12:03:39 R - Iterating arm64 instruction set 99%...
+12:03:43 R - Iterating arm64 instruction set 100%...
+12:03:45 R - Created tool/arm64.opc.
+Total generated 108361280 native instructions.
+
+# compress with brotli
+AetherVM % brotli -q 11 -o tool/arm64.opc.br tool/arm64.opc
+```
+
+It'll be used to compile the `AetherVM` runtime when building for iOS.
