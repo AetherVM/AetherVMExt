@@ -1,26 +1,26 @@
 # AetherVMExt
-[AetherVM](https://github.com/AetherVM/AetherVM) extension files for iOS.
+[AetherVM](https://github.com/AetherVM/AetherVM) extension files for un-jailbroken iOS without JIT.
 
 ## arm64.opc.br
-[Remill](https://github.com/lifting-bits/remill) has poor support for `AArch64` SIMD instruction set, so we use this pre-iterated opcodes, which it won't and can't lift, as a supplement when executing these instructions.
+[Remill](https://github.com/lifting-bits/remill) has poor support for `AArch64` SIMD instruction set and some advanced GPR instructions, so we use this pre-iterated opcodes, which it won't and can't lift, as a supplement when executing these instructions on platforms without rwx-page support like iOS.
 
-This file is generated in the following steps:
+This file is generated in the following steps (with **icpp** and **brotli** available in PATH):
 ```
 # generate the raw opcodes
-AetherVM % icpp tool/handler_generator_arm64.cc tool/arm64.opc
+AetherVMExt % icpp ../AetherVM/tool/handler_generator_arm64.cc ./arm64.opc
 10:39:35 R - Iterating arm64 instruction set 0%...
 10:39:36 R - Iterating arm64 instruction set 1%...
 10:42:16 R - Iterating arm64 instruction set 2%...
 10:43:57 R - Iterating arm64 instruction set 3%...
 ...
-12:03:16 R - Iterating arm64 instruction set 98%...
-12:03:39 R - Iterating arm64 instruction set 99%...
-12:03:43 R - Iterating arm64 instruction set 100%...
-12:03:45 R - Created tool/arm64.opc.
-Total generated 108361280 native instructions.
+13:03:16 R - Iterating arm64 instruction set 98%...
+13:03:39 R - Iterating arm64 instruction set 99%...
+13:03:43 R - Iterating arm64 instruction set 100%...
+13:03:45 R - Created tool/arm64.opc.
+Total generated 59316122 native instructions.
 
 # compress with brotli
-AetherVM % brotli -q 11 -o tool/arm64.opc.br tool/arm64.opc
+AetherVMExt % brotli -q 11 -f -o ./arm64.opc.br ./arm64.opc
 ```
 
 It'll be used to compile the `AetherVM` runtime when building for iOS.
